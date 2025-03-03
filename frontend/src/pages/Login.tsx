@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../slices/authSlice"; 
-import api from "../services/api";
+
 import { Link } from "react-router-dom";
 import "./login.css"; 
 
@@ -10,22 +10,13 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await api.post("/auth/login", { email, password });
-      const token = response.data.token;
-      dispatch(login(token)); 
-    } catch (error) {
-      console.error("Error logging in:", error);
-    }
-  };
+
 
   return (
     <div className="login-container">
       <div className="login-form">
         <h1 className="login-heading">Login</h1>
-        <form onSubmit={handleLogin} className="form">
+        <form className="form">
           <div className="form-input">
             <input
               type="email"
