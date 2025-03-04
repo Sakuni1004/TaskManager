@@ -1,0 +1,10 @@
+"use strict";
+exports.__esModule = true;
+var express_1 = require("express");
+var taskController_1 = require("../controllers/taskController");
+var router = express_1["default"].Router();
+router.post("/create", taskController_1.createTask);
+router.get("/teacher/:teacherId", taskController_1.getTasksByTeacher);
+router.put("/update/:taskId", taskController_1.updateTaskStatus);
+router["delete"]("/delete/:taskId", taskController_1.deleteTask);
+exports["default"] = router;

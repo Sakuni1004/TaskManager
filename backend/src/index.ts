@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/database";
 import authRoutes from "./routes/authRoutes";
+import taskRouter from './routes/taskRoutes';
 
 dotenv.config();
 
@@ -14,7 +15,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
+app.use('/auth/tasks', taskRouter);
 
 connectDB().then(() => {
-  app.listen(PORT, () => console.log(` Server running on http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(` Server running http://localhost:${PORT}`));
 });
