@@ -1,22 +1,43 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { login } from "../slices/authSlice"; 
-
+import axios from "axios";
 import { Link } from "react-router-dom";
-import "./login.css"; 
+import "./login.css";  
 
 const Login: React.FC = () => {
-  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
 
+    try {
+      const response = await axios.post("http://localhost:5000/auth/login", {
+        email,
+        password,
+      });
+
+      setSuccessMessage(response.data.message);
+
+      
+      localStorage.setItem("authToken", response.data.token);
+
+      
+      window.location.href = "/dashboard"; 
+    } catch (error: any) {
+      console.error("Error logging in:", error.response?.data || error.message);
+      setErrorMessage(error.response?.data?.message || "Invalid credentials.");
+    }
+  };
 
   return (
     <div className="login-container">
       <div className="login-form">
-        <h1 className="login-heading">Login</h1>
-        <form className="form">
+        <h1 className="login-heading">Login to Task Manager</h1>
+        <form onSubmit={handleLogin} className="form">
           <div className="form-input">
             <input
               type="email"
@@ -24,6 +45,7 @@ const Login: React.FC = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className="form-input">
@@ -33,14 +55,21 @@ const Login: React.FC = () => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
-          <button type="submit" className="submit-button">Login</button>
+
+          {successMessage && <p className="success-message">{successMessage}</p>}
+
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+
+          <button type="submit" className="submit-button">
+            Login
+          </button>
         </form>
-        <div className="sign-up-link">
+        <div className="signup-link">
           <p>
-            Don't have an account?{" "}
-            <Link to="/signup">Sign up here</Link>
+            Don't have an account? <Link to="/signup">Sign up here</Link>
           </p>
         </div>
       </div>
@@ -49,4 +78,3 @@ const Login: React.FC = () => {
 };
 
 export default Login;
-

@@ -5,6 +5,8 @@ import connectDB from "./config/database";
 import authRoutes from "./routes/authRoutes";
 
 dotenv.config();
+
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
 const app = express();
 const PORT = process.env.PORT || 5000;
 

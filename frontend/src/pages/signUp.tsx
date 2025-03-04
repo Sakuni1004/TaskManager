@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";  
+import axios from "axios";
 import { Link } from "react-router-dom";
 import "./signUp.css";
 
@@ -8,26 +8,31 @@ const SignUp: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"student" | "teacher">("student");
-  const [errorMessage, setErrorMessage] = useState("");  
-  const [successMessage, setSuccessMessage] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage("");  
-    setSuccessMessage(""); 
+    setErrorMessage("");
+    setSuccessMessage("");
     try {
-
       const response = await axios.post("http://localhost:5000/auth/register", {
         username,
         email,
         password,
-        role
+        role,
       });
 
-      setSuccessMessage(response.data.message);  
+      setSuccessMessage(response.data.message);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error: any) {
-      console.error("Error registering user:", error.response?.data || error.message);
-      setErrorMessage(error.response?.data?.message || "Something went wrong!");  
+      console.error(
+        "Error registering user:",
+        error.response?.data || error.message
+      );
+      setErrorMessage(error.response?.data?.message || "Something went wrong!");
     }
   };
 
@@ -78,9 +83,10 @@ const SignUp: React.FC = () => {
             </select>
           </div>
 
-          {successMessage && <p className="success-message">{successMessage}</p>}
+          {successMessage && (
+            <p className="success-message">{successMessage}</p>
+          )}
 
-       
           {errorMessage && <p className="error-message">{errorMessage}</p>}
 
           <button type="submit" className="submit-button">
