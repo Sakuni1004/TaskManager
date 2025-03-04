@@ -1,110 +1,133 @@
-
 import React, { useState } from "react";
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
-
-
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  SelectChangeEvent, // Import this
+} from "@mui/material";
+import "./CreateTaskForm.css"; // Import the CSS file
 
 interface CreateTaskFormProps {
   onClose: () => void;
-  onSubmit: (task: { title: string; description: string; taskId: string; status: string }) => void;
+  onSubmit: (task: {
+    title: string;
+    description: string;
+    dueDate: string;
+    studentId: string;
+    status: string;
+  }) => void;
 }
 
-const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onClose, onSubmit }) => {
+const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
+  onClose,
+  onSubmit,
+}) => {
   const [task, setTask] = useState({
     title: "",
     description: "",
-    taskId: "",
-    status: "Pending",
+    dueDate: "",
+    studentId: "",
+    status: "",
   });
 
-  // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-    setTask({ ...task, [e.target.name as string]: e.target.value });
-  };
-
-  // Handle status change
-  const handleChangeProgressButton = (e: React.ChangeEvent<{ value: unknown }>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<string>
+  ) => {
+    const { name, value } = e.target;
     setTask((prevTask) => ({
       ...prevTask,
-      status: e.target.value as string, 
+      [name]: value,
     }));
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(task); 
-    setTask({ title: "", description: "", taskId: "", status: "Pending" }); // Reset the form
+    onSubmit(task);
+    setTask({
+      title: "",
+      description: "",
+      dueDate: "",
+      studentId: "",
+      status: "",
+    });
   };
 
   return (
-    <div className="taskForm">
-      <h2>Create New Task</h2>
-      <form onSubmit={handleSubmit}>
-
-        {/* Task Title */}
+    <div className="task-form-container">
+      <h2 className="form-title">Create New Task</h2>
+      <form className="task-form" onSubmit={handleSubmit}>
         <TextField
           label="Task Title"
-          variant="outlined"
-          fullWidth
-          margin="normal"
           name="title"
           value={task.title}
           onChange={handleChange}
-        />
-
-        {/* Task ID */}
-        <TextField
-          label="Task ID"
-          variant="outlined"
           fullWidth
           margin="normal"
-          name="taskId"
-          value={task.taskId}
-          onChange={handleChange}
+          required
         />
 
-        {/* Task Description */}
         <TextField
           label="Task Description"
-          variant="outlined"
-          fullWidth
-          margin="normal"
           name="description"
           value={task.description}
           onChange={handleChange}
+          fullWidth
+          margin="normal"
           multiline
           rows={4}
+          required
         />
 
-        {/* Task Status */}
+        <TextField
+          type="date"
+          label="Due Date"
+          name="dueDate"
+          value={task.dueDate}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          InputLabelProps={{ shrink: true }}
+          required
+        />
+
+        <TextField
+          label="Student ID"
+          name="studentId"
+          value={task.studentId}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+        />
+
         <FormControl fullWidth margin="normal">
-          <InputLabel>Task Status</InputLabel>
-          <Select
-            value={task.status}
-            label="Task Status"
-            name="status"
-           
-          >
+          <InputLabel>Status</InputLabel>
+          <Select name="status" value={task.status} onChange={handleChange}>
+            <MenuItem value="Created">Created</MenuItem>
             <MenuItem value="Pending">Pending</MenuItem>
             <MenuItem value="Completed">Completed</MenuItem>
             <MenuItem value="In Progress">In Progress</MenuItem>
           </Select>
         </FormControl>
 
-        {/* Submit Button */}
-        <Button type="submit" variant="contained" color="primary">
-          Create Task
-        </Button>
-        <Button
-          type="button"
-          variant="outlined"
-          color="secondary"
-          onClick={onClose} // Close form when clicking cancel
-          style={{ marginLeft: '10px' }}
-        >
-          Cancel
-        </Button>
+        <div className="button-group">
+          <Button type="submit" variant="contained" color="primary">
+            Create Task
+          </Button>
+          <Button
+            type="button"
+            variant="outlined"
+            color="secondary"
+            onClick={onClose}
+            className="cancel-button"
+          >
+            Cancel
+          </Button>
+        </div>
       </form>
     </div>
   );

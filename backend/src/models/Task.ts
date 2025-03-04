@@ -29,20 +29,20 @@ const taskSchema: Schema = new Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'completed'],
-    default: 'pending',
+    
   },
   teacherId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+    type: String,
+    
+   
   },
   studentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
+    type: String,
   },
 });
 
 const Task = mongoose.model<ITask>('Task', taskSchema);
 
 export default Task;
+
+
