@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+
 import "./login.css";  
 
 const Login: React.FC = () => {
@@ -8,6 +9,8 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,10 +26,21 @@ const Login: React.FC = () => {
       setSuccessMessage(response.data.message);
 
       
-      localStorage.setItem("authToken", response.data.token);
+    // Store the token in localStorage
+    const token = response.data.token;
+    localStorage.setItem("authToken", token);
 
-      
-      window.location.href = "/dashboard"; 
+    const userRole = response.data.role;
+    console.log("user", userRole);
+
+
+    if (userRole === "teacher") {
+      window.location.href = "/teacherDashboard";
+    } else {
+      window.location.href = "/studentDashboard";
+    }
+
+
     } catch (error: any) {
       console.error("Error logging in:", error.response?.data || error.message);
       setErrorMessage(error.response?.data?.message || "Invalid credentials.");
