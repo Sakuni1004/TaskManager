@@ -1,0 +1,63 @@
+/* Container styling */
+.container {
+    max-width: 90%;
+    margin: 20px auto;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+  }
+  
+  /* Table Styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+  }
+  
+  /* Table Header */
+  thead tr {
+    background-color: #67aefb;
+    color: white;
+    text-align: left;
+    font-size: 16px;
+  }
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Table Rows */
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Hover effect */
+  tbody tr:hover {
+    background-color: #e3f2fd;
+    transition: 0.3s;
+  }
+  
+  /* Button Styling */
+  button {
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  }
+  
+  .bg-blue-500 {
+    background-color: #007bff;
+  }
+  
+  .bg-red-500 {
+    background-color: #dc3545;
+  }
+  

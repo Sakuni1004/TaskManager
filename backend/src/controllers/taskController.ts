@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import Task from "../models/Task";
 import jwt from "jsonwebtoken";
+import jwtDecode from "jwt-decode";
+
 
 // Create a new task
 export const createTask = async (req: Request, res: Response): Promise<void> => {
@@ -10,9 +12,13 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
   console.log("Received task data:", req.body);
 
   if (!token) {
+
+ 
     res.status(401).json({ message: "No token, authorization denied" });
     return;
   }
+
+
 
   try {
     
@@ -24,6 +30,7 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
     }
 
     const teacherId = decoded.id; 
+    console.log("teacher ID:",teacherId);
 
     const task = new Task({
       title,

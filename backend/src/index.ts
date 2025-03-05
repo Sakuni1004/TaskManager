@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
-app.use('/auth/tasks', taskRouter);
+app.use('/tasks', taskRouter);
 
 connectDB().then(() => {
   app.listen(PORT, () => console.log(` Server running http://localhost:${PORT}`));

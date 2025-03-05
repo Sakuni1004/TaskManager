@@ -33,7 +33,7 @@ const taskSchema: Schema = new Schema({
   },
   teacherId: {
     type: String,
-    
+    required: true,
    
   },
   studentId: {

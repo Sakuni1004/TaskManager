@@ -22,11 +22,18 @@ import User from "../models/User";
       return;
     }
 
+
+    const payload = {
+      id: user.id,
+      iat: Math.floor(Date.now() / 1000), 
+      role: user.role,  
+    };
     
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: "1h" });
+    const token = jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+
     console.log("Role:", user.role);
     console.log("t", token);
-
+ 
 
     res.status(200).json({
       message: "Login successful",

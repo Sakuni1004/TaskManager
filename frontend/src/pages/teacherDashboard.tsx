@@ -1,25 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import CreateTaskForm from "../components/createTaskForm";
 import axios from "axios";
-import TaskCardList from '../components/taskCardTeacher';
+import { TaskTable } from "../components/taskTable";
+
 import "./teacherDashbord.css";
 
 const TeacherDashboard: React.FC = () => {
   const [openForm, setOpenForm] = useState(false);
+  const [tasks, setTasks] = useState([]);
 
   
-    const [tasks, setTasks] = useState([
-      {
-        id: "1",
-        title: "Complete homework",
-        description: "Finish math homework",
-        status: "Pending",
-      },
+  const fetchTasks = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("No token found. Please log in.");
+      return;
+    }
 
-    
- 
-    ]);
+    try {
+      const response = await axios.get("http://localhost:5000/tasks/teacher/:teacherId", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setTasks(response.data); 
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
+  
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   const handleSubmit = async (task: {
     title: string;
@@ -37,7 +49,7 @@ const TeacherDashboard: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/tasks/create",
+        "http://localhost:5000/tasks/create",
         task,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -46,21 +58,10 @@ const TeacherDashboard: React.FC = () => {
 
       console.log("Task Created:", response.data);
       setOpenForm(false);
+      fetchTasks(); 
     } catch (error) {
       console.error("Error creating task:", error);
     }
-  };
-
-  const handleEditTask = (updatedTask: { id: string; title: string; description: string; status: string }) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === updatedTask.id ? { ...task, ...updatedTask } : task
-      )
-    );
-  };
-
-  const handleDeleteTask = (id: string) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 
   return (
@@ -85,9 +86,8 @@ const TeacherDashboard: React.FC = () => {
         Add Task
       </Button>
 
-      {tasks.map((task) => (
-          <TaskCardList tasks={tasks} onEdit={handleEditTask} onDelete={handleDeleteTask} />
-      ))}
+      {/* Pass tasks to TaskTable */}
+      <TaskTable tasks={tasks} />
 
       {openForm && (
         <CreateTaskForm
