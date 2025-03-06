@@ -28,7 +28,7 @@ export   const TaskTable: React.FC <TaskTableProps>= ({ tasks }) => {
     
   
     return (
-        <div className="container mx-auto p-4">
+        <div className="container ">
          
           <table className="w-full border-collapse border border-gray-300">
             <thead>

@@ -3,22 +3,18 @@ import { Button } from "@mui/material";
 import CreateTaskForm from "../components/createTaskForm";
 import axios from "axios";
 import { TaskTable } from "../components/taskTable";
-
 import "./teacherDashbord.css";
 
 const TeacherDashboard: React.FC = () => {
   const [openForm, setOpenForm] = useState(false);
   const [tasks, setTasks] = useState([]);
-    const [name, setName] = useState<string | null>(null)
-  
-    
-  useEffect(()=>{
+  const [name, setName] = useState<string | null>(null);
+
+  useEffect(() => {
     const storeName = localStorage.getItem("sName");
     setName(storeName);
-  })
-  
+  });
 
-  
   const fetchTasks = async () => {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -36,7 +32,6 @@ const TeacherDashboard: React.FC = () => {
     }
   };
 
-  
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -73,8 +68,9 @@ const TeacherDashboard: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1 className="heading">Wellcome {name}!</h1>
+    <div className="container">
+      <h1 className="heading">Welcome {name}!</h1>
+      
       <Button
         variant="contained"
         color="primary"
@@ -82,7 +78,7 @@ const TeacherDashboard: React.FC = () => {
         onClick={() => setOpenForm(true)}
         style={{
           position: "fixed",
-          bottom: "20px",
+          bottom: "50px",
           right: "20px",
           zIndex: 1000,
           padding: "12px 20px",
@@ -98,10 +94,12 @@ const TeacherDashboard: React.FC = () => {
       <TaskTable tasks={tasks} />
 
       {openForm && (
-        <CreateTaskForm
-          onClose={() => setOpenForm(false)}
-          onSubmit={handleSubmit}
-        />
+        <div className="modal-overlay">
+          <CreateTaskForm
+            onClose={() => setOpenForm(false)}
+            onSubmit={handleSubmit}
+          />
+        </div>
       )}
     </div>
   );
