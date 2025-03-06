@@ -5,6 +5,8 @@ import connectDB from "./config/database";
 import authRoutes from "./routes/authRoutes";
 import taskRouter from './routes/taskRoutes';
 
+
+
 dotenv.config();
 
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
@@ -16,6 +18,8 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use('/tasks', taskRouter);
+
+
 
 connectDB().then(() => {
   app.listen(PORT, () => console.log(` Server running http://localhost:${PORT}`));

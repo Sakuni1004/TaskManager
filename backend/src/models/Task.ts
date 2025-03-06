@@ -1,4 +1,6 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
+
+
 
 interface ITask extends Document {
   title: string;
@@ -6,8 +8,12 @@ interface ITask extends Document {
   assignedDate: Date;
   dueDate: Date;
   status: string;
-  teacherId: mongoose.Schema.Types.ObjectId; 
-  studentId?: mongoose.Schema.Types.ObjectId; 
+  teacherId: mongoose.Schema.Types.ObjectId;
+  studentId: String;
+  student: mongoose.Schema.Types.ObjectId;
+  
+  
+  
 }
 
 const taskSchema: Schema = new Schema({
@@ -29,20 +35,24 @@ const taskSchema: Schema = new Schema({
   },
   status: {
     type: String,
-    
   },
   teacherId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
-   
   },
   studentId: {
     type: String,
   },
+ 
+  student: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Student", 
+    required: true,
+  },
+
+
 });
 
-const Task = mongoose.model<ITask>('Task', taskSchema);
+const Task = mongoose.model<ITask>("Task", taskSchema);
 
 export default Task;
-
-

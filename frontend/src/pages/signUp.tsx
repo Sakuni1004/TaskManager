@@ -1,3 +1,5 @@
+
+
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -7,7 +9,8 @@ const SignUp: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"student" | "teacher">("student");
+  const [role, setRole] = useState<"student" | "teacher" | "">("");
+  const [studentId, setStudentId] = useState(""); // Add state for student ID
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -21,6 +24,7 @@ const SignUp: React.FC = () => {
         email,
         password,
         role,
+        studentId: role === "student" ? studentId : undefined, // Send studentId only if role is "student"
       });
 
       setSuccessMessage(response.data.message);
@@ -75,13 +79,28 @@ const SignUp: React.FC = () => {
             <select
               className="inputRole"
               value={role}
-              onChange={(e) => setRole(e.target.value as "student" | "teacher")}
+              onChange={(e) => setRole(e.target.value as "student" | "teacher" | "")}
               required
             >
+              <option value="">Select Your Role</option>  {/* Default option */}
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
             </select>
           </div>
+
+          {/* Conditionally render student ID field if role is "student" */}
+          {role === "student" && (
+            <div className="form-input">
+              <input
+                type="text"
+                className="input"
+                placeholder="Student ID"
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                required
+              />
+            </div>
+          )}
 
           {successMessage && (
             <p className="success-message">{successMessage}</p>

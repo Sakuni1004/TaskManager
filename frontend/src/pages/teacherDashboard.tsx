@@ -9,6 +9,14 @@ import "./teacherDashbord.css";
 const TeacherDashboard: React.FC = () => {
   const [openForm, setOpenForm] = useState(false);
   const [tasks, setTasks] = useState([]);
+    const [name, setName] = useState<string | null>(null)
+  
+    
+  useEffect(()=>{
+    const storeName = localStorage.getItem("sName");
+    setName(storeName);
+  })
+  
 
   
   const fetchTasks = async () => {
@@ -66,7 +74,7 @@ const TeacherDashboard: React.FC = () => {
 
   return (
     <div>
-      <h1>Teacher Dashboard</h1>
+      <h1 className="heading">Wellcome {name}!</h1>
       <Button
         variant="contained"
         color="primary"

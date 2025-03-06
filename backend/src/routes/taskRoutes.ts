@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
-import {createTask, getTasksByTeacher, updateTaskStatus, deleteTask} from  '../controllers/taskController';
-import { authenticateUser } from "../middleware/authMiddleware";
+import {createTask, getTasksByTeacher, updateTaskStatus, deleteTask, getTasksByStudent } from  '../controllers/taskController';
+
 const router = express.Router();
 
 
@@ -14,5 +14,9 @@ router.put("/update/:taskId", updateTaskStatus);
 
 
 router.delete("/delete/:taskId", deleteTask);
+
+
+router.get("/:studentId", getTasksByStudent);
+
 
 export default router;

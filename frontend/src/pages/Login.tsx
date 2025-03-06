@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+
 import { Link } from "react-router-dom";
 
-import "./login.css";  
+import "./login.css";
+import { decodeToken } from "react-jwt";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
-
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,24 +23,36 @@ const Login: React.FC = () => {
         password,
       });
 
+      const decodedTokenForStudentId = decodeToken(
+        response.data.token
+        
+      ) as any;
+      console.log("decode", decodedTokenForStudentId);
+
       setSuccessMessage(response.data.message);
 
+    
+
+      const token = response.data.token;
+      localStorage.setItem("authToken", token);
+
+      const id = decodedTokenForStudentId.id;
+      localStorage.setItem("sId",id);
+
+      const name = decodedTokenForStudentId.name;
+      localStorage.setItem("sName",name);
+
+
+      const userRole = response.data.role;
+      console.log("user", userRole);
+
       
-    // Store the token in localStorage
-    const token = response.data.token;
-    localStorage.setItem("authToken", token);
 
-    const userRole = response.data.role;
-    console.log("user", userRole);
-
-
-    if (userRole === "teacher") {
-      window.location.href = "/teacherDashboard";
-    } else {
-      window.location.href = "/studentDashboard";
-    }
-
-
+      if (userRole === "teacher") {
+        window.location.href = "/teacherDashboard";
+      } else {
+        window.location.href = "/studentDashboard";
+      }
     } catch (error: any) {
       console.error("Error logging in:", error.response?.data || error.message);
       setErrorMessage(error.response?.data?.message || "Invalid credentials.");
@@ -73,7 +85,9 @@ const Login: React.FC = () => {
             />
           </div>
 
-          {successMessage && <p className="success-message">{successMessage}</p>}
+          {successMessage && (
+            <p className="success-message">{successMessage}</p>
+          )}
 
           {errorMessage && <p className="error-message">{errorMessage}</p>}
 
