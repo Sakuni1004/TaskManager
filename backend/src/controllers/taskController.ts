@@ -104,12 +104,9 @@ export const getTasksByTeacher = async (
 };
 
 // Update task status
-export const updateTaskStatus = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const { status } = req.body;
-  const taskId = req.params.taskId;
+export const updateTask = async (req: Request, res: Response): Promise<void> => {
+  const { title, description, status } = req.body;
+  const { taskId } = req.params;
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
@@ -126,12 +123,17 @@ export const updateTaskStatus = async (
       return;
     }
 
+    // Only the teacher who created the task can update it
     if (decoded.id !== task.teacherId.toString()) {
       res.status(403).json({ message: "Not authorized to update this task" });
       return;
     }
 
-    task.status = status;
+    // Update only the fields that are provided
+    if (title) task.title = title;
+    if (description) task.description = description;
+    if (status) task.status = status;
+
     await task.save();
 
     res.status(200).json({ message: "Task updated successfully", task });
@@ -141,6 +143,7 @@ export const updateTaskStatus = async (
       .json({ message: "Server error", error: (error as Error).message });
   }
 };
+
 
 // Delete task
 export const deleteTask = async (
