@@ -143,8 +143,9 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     <div className="task-form-container">
       <h2 className="form-title">{task ? "Edit Task" : "Create Task"}</h2>
       <form className="task-form" onSubmit={handleSubmit}>
-      <label htmlFor="title">Enter Task Title</label>
-        <input
+      <label htmlFor="title" style={{ fontWeight: '500',  }}>Enter Task Title</label>
+        <input className="updateFormData"
+         style={{ fontWeight: '100', fontSize: '12px' }}
           type="text"
           name="title"
           placeholder="Task Title"
@@ -152,17 +153,19 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
           onChange={handleChange}
           required
         />
-      <label htmlFor="title">Enter Task Sescription</label>
+      <label htmlFor="title" style={{ fontWeight: '500',  }}>Enter Task Sescription</label>
         <textarea
+        style={{ fontWeight: '100', fontSize: '12px' }}
           name="description"
           placeholder="Task Description"
           value={taskData.description}
           onChange={handleChange}
           required
         />
-      <label htmlFor="title">Enter deadline for the task</label>
+      <label htmlFor="title" style={{ fontWeight: '500',  }}>Enter deadline for the task</label>
 
         <input
+        style={{ fontWeight: '100', fontSize: '12px' }}
           type="date"
           name="dueDate"
           value={taskData.dueDate}
@@ -172,7 +175,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
 
         {/* Student Dropdown */}
         <div>
-          <label>Select a Student:</label>
+          <label style={{ fontWeight: '500',  }}>Select a Student:</label><br/>
           <select onChange={handleSelectChange} value={selectedStudentId}>
   <option value="">-- Select --</option>
   {Array.isArray(students) &&
@@ -198,10 +201,11 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
 
         {/* Status Dropdown */}
         <FormControl fullWidth margin="normal">
-          <InputLabel>Status</InputLabel>
+          <InputLabel sx={{ fontWeight: 600 , color :'green' }}>Status</InputLabel>
           <Select
             name="status"
             value={taskData.status}
+            style={{ fontWeight: '100', fontSize: '12px' }}
             onChange={(e) =>
               setTaskData((prev) => ({
                 ...prev,
@@ -209,10 +213,10 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
               }))
             }
           >
-            <MenuItem value="Created">Created</MenuItem>
-            <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="Completed">Completed</MenuItem>
-            <MenuItem value="In Progress">In Progress</MenuItem>
+            <MenuItem value="Created" style={{ fontWeight: '100', fontSize: '12px' }}>Created</MenuItem>
+            <MenuItem value="Pending" style={{ fontWeight: '100', fontSize: '12px' }}>Pending</MenuItem>
+            <MenuItem value="Completed" style={{ fontWeight: '100', fontSize: '12px' }}>Completed</MenuItem>
+            <MenuItem value="In Progress" style={{ fontWeight: '100', fontSize: '12px' }}>In Progress</MenuItem>
           </Select>
         </FormControl>
 

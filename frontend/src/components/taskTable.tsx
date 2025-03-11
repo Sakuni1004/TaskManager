@@ -21,21 +21,21 @@ export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit, onDelete })
     <table>
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Due Date</th>
-          <th>Status</th>
-          <th>Actions</th> 
+          <th style={{ fontSize: "20px", textAlign:'center' }}>Title</th>
+          <th style={{ fontSize: "20px", textAlign:'center' }}>Description</th>
+          <th style={{ fontSize: "20px", textAlign:'center' }}>Due Date</th>
+          <th style={{ fontSize: "20px", textAlign:'center' }}>Status</th>
+          <th style={{ fontSize: "20px", textAlign:'center' }}>Actions</th> 
         </tr>
       </thead>
       <tbody>
         {tasks.map((task, index) => (
           <tr key={index}>
-            <td>{task.title}</td>
-            <td>{task.description}</td>
-            <td>{new Date(task.dueDate).toLocaleDateString()}</td>
-            <td>{task.status}</td>
-            <td>
+            <td style={{ fontWeight: "500" }}>{task.title}</td>
+            <td style={{  fontSize: "14px" }}>{task.description}</td>
+            <td style={{  textAlign:'center', fontSize: "14px" }}>{new Date(task.dueDate).toLocaleDateString()}</td>
+            <td style={{  textAlign:'center', fontSize: "14px" }}>{task.status}</td>
+            <td style={{  textAlign:'center', fontSize: "14px" }}>
               <button className="edit-button" onClick={() => onEdit(task)}>Edit</button>
               <button className="delete-button" onClick={() => onDelete(task._id)}>Delete</button>
             </td> 
