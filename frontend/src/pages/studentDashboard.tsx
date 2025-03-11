@@ -33,10 +33,18 @@ const StudentDashboard: React.FC = () => {
     fetchTasks();
   }, []);
 
+  const handleStatusUpdate = (updatedTask: any) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task._id === updatedTask._id ? updatedTask : task))
+    );
+    console.log("🎯 Task Updated in UI:", updatedTask); // Debugging log
+  };
+  
+
   return (
     <div className="container2">
-      <h1 className="welcome">Welcome {studentName} !</h1>
-      {loading ? <p>Loading tasks...</p> : <TaskCard tasks={tasks} />}
+      <h1 className="welcome">Welcome {studentName} ! Here Your Tasks..</h1>
+      {loading ? <p>Loading tasks...</p> : <TaskCard tasks={tasks} onStatusUpdate={handleStatusUpdate}/>}
     </div>
   );
 };

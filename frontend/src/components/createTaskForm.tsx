@@ -4,11 +4,12 @@ import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { getAllStudents } from "../services/studentServices";
 import "./CreateTaskForm.css";
 
-// Define Student interface
+
 interface Student {
   _id: string;
   studentRegistrationNumber: string;
   username: string;
+  
 }
 
 interface CreateTaskFormProps {
@@ -29,12 +30,9 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     console.error("Teacher ID not found in localStorage");
   }
 
-
-
-  const [students, setStudents] = useState<Student[]>([]); // Ensure proper type
-  const [selectedStudentId, setSelectedStudentId] = useState<string>(""); // Store selected student ID
-  const [selectedRegNumber, setSelectedRegNumber] = useState<string>(""); // Store registration number
-
+  const [students, setStudents] = useState<Student[]>([]); 
+  const [selectedStudentId, setSelectedStudentId] = useState<string>(""); 
+  const [selectedRegNumber, setSelectedRegNumber] = useState<string>(""); 
 
   const [taskData, setTaskData] = useState({
     title: "",
@@ -45,8 +43,6 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     studentRegistrationNumber: selectedRegNumber,
     studentId: selectedStudentId,
   });
-
-
 
   useEffect(() => {
     if (task) {
@@ -66,20 +62,19 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     const fetchStudents = async () => {
       try {
         const response = await getAllStudents();
-       const dataArray = response.data
+        const dataArray = response.data;
         if (Array.isArray(dataArray)) {
-
           setStudents(dataArray);
         } else {
           console.error("Expected an array but got:", response);
-          setStudents([]); // Fallback to empty array
+          setStudents([]); 
         }
       } catch (error) {
         console.error("Error fetching students:", error);
-        setStudents([]); 
+        setStudents([]);
       }
     };
-  
+
     fetchStudents();
   }, []);
   const handleChange = (
@@ -143,9 +138,12 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
     <div className="task-form-container">
       <h2 className="form-title">{task ? "Edit Task" : "Create Task"}</h2>
       <form className="task-form" onSubmit={handleSubmit}>
-      <label htmlFor="title" style={{ fontWeight: '500',  }}>Enter Task Title</label>
-        <input className="updateFormData"
-         style={{ fontWeight: '100', fontSize: '12px' }}
+        <label htmlFor="title" style={{ fontWeight: "500" }}>
+          Enter Task Title
+        </label>
+        <input
+          className="updateFormData"
+          style={{ fontWeight: "100", fontSize: "12px" }}
           type="text"
           name="title"
           placeholder="Task Title"
@@ -153,19 +151,23 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
           onChange={handleChange}
           required
         />
-      <label htmlFor="title" style={{ fontWeight: '500',  }}>Enter Task Sescription</label>
+        <label htmlFor="title" style={{ fontWeight: "500" }}>
+          Enter Task Sescription
+        </label>
         <textarea
-        style={{ fontWeight: '100', fontSize: '12px' }}
+          style={{ fontWeight: "100", fontSize: "12px" }}
           name="description"
           placeholder="Task Description"
           value={taskData.description}
           onChange={handleChange}
           required
         />
-      <label htmlFor="title" style={{ fontWeight: '500',  }}>Enter deadline for the task</label>
+        <label htmlFor="title" style={{ fontWeight: "500" }}>
+          Enter deadline for the task
+        </label>
 
         <input
-        style={{ fontWeight: '100', fontSize: '12px' }}
+          style={{ fontWeight: "100", fontSize: "12px" }}
           type="date"
           name="dueDate"
           value={taskData.dueDate}
@@ -175,37 +177,38 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
 
         {/* Student Dropdown */}
         <div>
-          <label style={{ fontWeight: '500',  }}>Select a Student:</label><br/>
+          <label style={{ fontWeight: "500" }}>Select a Student:</label>
+          <br />
           <select onChange={handleSelectChange} value={selectedStudentId}>
-  <option value="">-- Select --</option>
-  {Array.isArray(students) &&
-    students.map((student) => (
-      <option key={student._id} value={student._id}>
-        {student.username}
-      </option>
-    ))}
-</select>
+            <option value="">-- Select --</option>
+            {Array.isArray(students) &&
+              students.map((student) => (
+                <option key={student._id} value={student._id}>
+                  {student.username}
+                </option>
+              ))}
+          </select>
 
           {selectedStudentId && (
-            <div>
-              <h3>Selected Student Details:</h3>
-              <p>
-                <strong>ID:</strong> {selectedStudentId}
-              </p>
-              <p>
-                <strong>Registration Number:</strong> {selectedRegNumber}
-              </p>
+            <div style={{ color: "rgb(93, 99, 93)", opacity: 0.6 }}>
+              <h5 style={{ lineHeight: "0.5" }}>Selected Student Details:</h5>
+
+              <h6 style={{ lineHeight: "0.5" }}>
+                Registration Number: {selectedRegNumber}
+              </h6>
             </div>
           )}
         </div>
 
         {/* Status Dropdown */}
         <FormControl fullWidth margin="normal">
-          <InputLabel sx={{ fontWeight: 600 , color :'green' }}>Status</InputLabel>
+          <InputLabel sx={{ fontWeight: 600, color: "green" }}>
+            Status
+          </InputLabel>
           <Select
             name="status"
             value={taskData.status}
-            style={{ fontWeight: '100', fontSize: '12px' }}
+            style={{ fontWeight: "100", fontSize: "12px" }}
             onChange={(e) =>
               setTaskData((prev) => ({
                 ...prev,
@@ -213,10 +216,30 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
               }))
             }
           >
-            <MenuItem value="Created" style={{ fontWeight: '100', fontSize: '12px' }}>Created</MenuItem>
-            <MenuItem value="Pending" style={{ fontWeight: '100', fontSize: '12px' }}>Pending</MenuItem>
-            <MenuItem value="Completed" style={{ fontWeight: '100', fontSize: '12px' }}>Completed</MenuItem>
-            <MenuItem value="In Progress" style={{ fontWeight: '100', fontSize: '12px' }}>In Progress</MenuItem>
+            <MenuItem
+              value="Created"
+              style={{ fontWeight: "100", fontSize: "12px" }}
+            >
+              Created
+            </MenuItem>
+            <MenuItem
+              value="Pending"
+              style={{ fontWeight: "100", fontSize: "12px" }}
+            >
+              Pending
+            </MenuItem>
+            <MenuItem
+              value="Completed"
+              style={{ fontWeight: "100", fontSize: "12px" }}
+            >
+              Completed
+            </MenuItem>
+            <MenuItem
+              value="In Progress"
+              style={{ fontWeight: "100", fontSize: "12px" }}
+            >
+              In Progress
+            </MenuItem>
           </Select>
         </FormControl>
 

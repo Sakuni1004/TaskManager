@@ -36,158 +36,183 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.deleteTask = exports.updateTaskStatus = exports.getTasksByTeacher = exports.createTask = void 0;
-var Task_1 = require("../models/Task");
-var jsonwebtoken_1 = require("jsonwebtoken");
-exports.createTask = function (req, res) { return __awaiter(void 0, void 0, Promise, function () {
-    var _a, title, description, dueDate, studentId, token, decoded, teacherId, task, error_1;
-    var _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _a = req.body, title = _a.title, description = _a.description, dueDate = _a.dueDate, studentId = _a.studentId;
-                token = (_b = req.header("Authorization")) === null || _b === void 0 ? void 0 : _b.replace("Bearer ", "");
-                if (!token) {
-                    res.status(401).json({ message: "No token, authorization denied" });
-                    return [2 /*return*/];
-                }
-                _c.label = 1;
-            case 1:
-                _c.trys.push([1, 3, , 4]);
-                decoded = jsonwebtoken_1["default"].verify(token, process.env.JWT_SECRET);
-                teacherId = decoded.id;
-                task = new Task_1["default"]({
-                    title: title,
-                    description: description,
-                    dueDate: dueDate,
-                    teacherId: teacherId,
-                    studentId: studentId
-                });
-                return [4 /*yield*/, task.save()];
-            case 2:
-                _c.sent();
-                res.status(201).json({ message: "Task created successfully", task: task });
-                return [3 /*break*/, 4];
-            case 3:
-                error_1 = _c.sent();
-                res.status(500).json({ message: "Server error", error: error_1.message });
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
-// Get all tasks for a specific teacher (requires authentication)
-exports.getTasksByTeacher = function (req, res) { return __awaiter(void 0, void 0, Promise, function () {
-    var teacherId, token, decoded, tasks, error_2;
-    var _a;
+exports.deleteTaskController = exports.updateTaskStatusController = exports.updateTaskController = exports.getTasksByStudentId = exports.getTasksByTeacherId = exports.createTaskController = void 0;
+var taskServices_1 = require("../services/taskServices");
+//create task
+exports.createTaskController = function (req, res) { return __awaiter(void 0, void 0, Promise, function () {
+    var _a, title, description, dueDate, status, teacherId, studentId, studentRegistrationNumber, newTask, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                teacherId = req.params.teacherId;
-                token = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", "");
-                if (!token) {
-                    res.status(401).json({ message: "No token, authorization denied" });
-                    return [2 /*return*/];
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, title = _a.title, description = _a.description, dueDate = _a.dueDate, status = _a.status, teacherId = _a.teacherId, studentId = _a.studentId, studentRegistrationNumber = _a.studentRegistrationNumber;
+                if (!title ||
+                    !description ||
+                    !dueDate ||
+                    !status ||
+                    !teacherId ||
+                    !studentId ||
+                    !studentRegistrationNumber) {
+                    return [2 /*return*/, res.status(400).json({ message: "All fields are required" })];
                 }
-                _b.label = 1;
+                return [4 /*yield*/, taskServices_1.createTaskService({
+                        title: title,
+                        description: description,
+                        dueDate: dueDate,
+                        status: status,
+                        teacherId: teacherId,
+                        studentId: studentId,
+                        studentRegistrationNumber: studentRegistrationNumber
+                    })];
             case 1:
-                _b.trys.push([1, 3, , 4]);
-                decoded = jsonwebtoken_1["default"].verify(token, process.env.JWT_SECRET);
-                if (decoded.id !== teacherId) {
-                    res.status(403).json({ message: "Not authorized to view these tasks" });
-                    return [2 /*return*/];
-                }
-                return [4 /*yield*/, Task_1["default"].find({ teacherId: teacherId })];
+                newTask = _b.sent();
+                console.log(newTask);
+                return [2 /*return*/, res.status(201).json(newTask)];
             case 2:
-                tasks = _b.sent();
+                error_1 = _b.sent();
+                console.error("Error in createTaskController:", error_1);
+                return [2 /*return*/, res.status(500).json({ message: "Error creating task" })];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+//get Tasks by teacher Id
+exports.getTasksByTeacherId = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var teacherId, tasks, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                teacherId = req.params.teacherId;
+                return [4 /*yield*/, taskServices_1.getTasksByTeacherService(teacherId)];
+            case 1:
+                tasks = _a.sent();
+                console.log("tasksTeacher", tasks);
+                res.status(200).json(tasks);
+                return [3 /*break*/, 3];
+            case 2:
+                error_2 = _a.sent();
+                res.status(500).json("Error fetching tasks");
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+//get task by student Id
+exports.getTasksByStudentId = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var studentId, tasks, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                console.log(" Controller reached!");
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                studentId = req.params.studentId;
+                console.log("Received studentId:", studentId);
+                return [4 /*yield*/, taskServices_1.getTasksByStudentService(studentId)];
+            case 2:
+                tasks = _a.sent();
+                console.log("Fetched tasks:", tasks);
                 res.status(200).json(tasks);
                 return [3 /*break*/, 4];
             case 3:
-                error_2 = _b.sent();
-                res.status(500).json({ message: "Server error", error: error_2.message });
+                error_3 = _a.sent();
+                console.error("Error in controller:", error_3);
+                res.status(500).json({ message: "Internal Server Error" });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
-// Update task status (e.g., completed or pending)
-exports.updateTaskStatus = function (req, res) { return __awaiter(void 0, void 0, Promise, function () {
-    var status, taskId, token, decoded, task, error_3;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+//update tasks by taskId
+exports.updateTaskController = function (req, res) { return __awaiter(void 0, void 0, Promise, function () {
+    var taskId, taskData, updatedTask, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
+                taskId = req.params.taskId;
+                taskData = req.body;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, taskServices_1.updateTaskService(taskId, taskData)];
+            case 2:
+                updatedTask = _a.sent();
+                if (!updatedTask) {
+                    res.status(404).json({ message: "Task not found" });
+                    return [2 /*return*/];
+                }
+                res.status(200).json(updatedTask);
+                return [3 /*break*/, 4];
+            case 3:
+                error_4 = _a.sent();
+                res.status(500).json({ message: "Error updating task: " });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+//updateStatus
+exports.updateTaskStatusController = function (req, res) { return __awaiter(void 0, void 0, Promise, function () {
+    var status, taskId, updatedTask, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
                 status = req.body.status;
                 taskId = req.params.taskId;
-                token = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", "");
-                if (!token) {
-                    res.status(401).json({ message: "No token, authorization denied" });
+                console.log("tttt", req.body);
+                console.log("id", taskId);
+                if (!status) {
+                    res.status(400).json({ message: "Status is required." });
                     return [2 /*return*/];
                 }
-                _b.label = 1;
+                return [4 /*yield*/, taskServices_1.updateTaskStatusService(taskId, status)];
             case 1:
-                _b.trys.push([1, 4, , 5]);
-                decoded = jsonwebtoken_1["default"].verify(token, process.env.JWT_SECRET);
-                return [4 /*yield*/, Task_1["default"].findById(taskId)];
+                updatedTask = _a.sent();
+                console.log("update", updatedTask);
+                if (!updatedTask) {
+                    res.status(404).json({ message: "Task not found or could not be updated." });
+                }
+                res.status(200).json({
+                    message: "Task status updated successfully",
+                    task: updatedTask
+                });
+                return [3 /*break*/, 3];
             case 2:
-                task = _b.sent();
-                if (!task) {
-                    res.status(404).json({ message: "Task not found" });
-                    return [2 /*return*/];
-                }
-                if (decoded.id !== task.teacherId.toString()) {
-                    res.status(403).json({ message: "Not authorized to update this task" });
-                    return [2 /*return*/];
-                }
-                task.status = status;
-                return [4 /*yield*/, task.save()];
-            case 3:
-                _b.sent();
-                res.status(200).json({ message: "Task updated successfully", task: task });
-                return [3 /*break*/, 5];
-            case 4:
-                error_3 = _b.sent();
-                res.status(500).json({ message: "Server error", error: error_3.message });
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                error_5 = _a.sent();
+                res.status(500).json({
+                    message: "Server error updating task status",
+                    error: error_5.message
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
-// Delete a task
-exports.deleteTask = function (req, res) { return __awaiter(void 0, void 0, Promise, function () {
-    var taskId, token, decoded, task, error_4;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+//delete
+exports.deleteTaskController = function (req, res) { return __awaiter(void 0, void 0, Promise, function () {
+    var id, message, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                taskId = req.params.taskId;
-                token = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", "");
-                if (!token) {
-                    res.status(401).json({ message: "No token, authorization denied" });
+                _a.trys.push([0, 2, , 3]);
+                id = req.params.id;
+                if (!id) {
+                    res.status(400).json({ error: "Task ID is required" });
                     return [2 /*return*/];
                 }
-                _b.label = 1;
+                return [4 /*yield*/, taskServices_1.deleteTaskService(id)];
             case 1:
-                _b.trys.push([1, 3, , 4]);
-                decoded = jsonwebtoken_1["default"].verify(token, process.env.JWT_SECRET);
-                return [4 /*yield*/, Task_1["default"].findByIdAndDelete(taskId)];
+                message = _a.sent();
+                res.status(200).json({ message: message });
+                return [3 /*break*/, 3];
             case 2:
-                task = _b.sent();
-                if (!task) {
-                    res.status(404).json({ message: "Task not found" });
-                    return [2 /*return*/];
-                }
-                if (decoded.id !== task.teacherId.toString()) {
-                    res.status(403).json({ message: "Not authorized to delete this task" });
-                    return [2 /*return*/];
-                }
-                res.status(200).json({ message: "Task deleted successfully" });
-                return [3 /*break*/, 4];
-            case 3:
-                error_4 = _b.sent();
-                res.status(500).json({ message: "Server error", error: error_4.message });
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                error_6 = _a.sent();
+                res.status(500).json({ error: error_6 instanceof Error ? error_6.message : "Failed to delete task" });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };

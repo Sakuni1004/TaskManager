@@ -4,6 +4,9 @@ import {
   findTaskByStudentRepo,
   findTaskByTeacherRepo,
   updateTask,
+  updateTaskStatusRepo,
+  
+
 } from "../db/taskRepo";
 import mongoose from "mongoose";
 
@@ -52,6 +55,25 @@ export const updateTaskService = async (taskId: string, taskData: any) => {
     throw new Error("Service error while updating task: ");
   }
 };
+
+// update task status
+export const updateTaskStatusService = async (taskId: String, status: string) => {
+  if (!taskId || !status) {
+  
+    console.log("tttt",taskId) ;
+    console.log("mmm",status) ;
+
+    throw new Error("Task ID and status are required.");
+  }
+  
+  const updatedTask = await updateTaskStatusRepo(taskId, status);
+  if (!updatedTask) {
+    throw new Error("Task not found or could not be updated.");
+  }
+
+  return updatedTask;
+};
+
 
 
 //delete

@@ -108,7 +108,34 @@ export const getTasksByTeacher = async (teacherId: string) => {
   };
 
 
-  //delete
+
+  //update task status
+  export const updateTaskStatus = async (taskId: string, status: string, token?: string) => {
+    try {
+      const authToken = token || localStorage.getItem("authToken"); 
+      if (!authToken) throw new Error("No authentication token provided");
+
+
+      const response = await axios.put
+      (`${API_URL}/tasks/status/${taskId}`, { status },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("responceeeeeeeeeeeee",response);
+      return response.data;
+    } catch (error: any) {
+      console.error("Error updating task status:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Failed to update task status");
+    }
+  };
+  
+
+
+  //delete the task
   export const deleteTask = async (taskId: String, token?: string) => {
     try {
       const authToken = token || localStorage.getItem("authToken"); 

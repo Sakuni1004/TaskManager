@@ -27,7 +27,7 @@ export const findTaskByStudentRepo = async (
 };
 
 
-//update task by id
+//update task by teacher
 export const updateTask = async (taskId: string, taskData: any) => {
   try {
     const updatedTask = await Task.findByIdAndUpdate(taskId, taskData, {
@@ -40,5 +40,14 @@ export const updateTask = async (taskId: string, taskData: any) => {
   }
 };
 
+//update task status by student
+export const updateTaskStatusRepo = async (taskId: String, status: string) => {
+  
+  return await Task.findByIdAndUpdate(taskId, { status }, { new: true });
+  
+};
+
 //delete
 export const deleteTaskRepo = (id: any) => Task.findByIdAndDelete(id);
+
+

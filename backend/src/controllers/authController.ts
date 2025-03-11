@@ -15,7 +15,7 @@ export const signUpController = async (
       password,
       role,
       studentRegistrationNumber,
-    };
+    }; 
     const createdUser = await signupService(userData);
     return res.status(201).json({
       message: `${

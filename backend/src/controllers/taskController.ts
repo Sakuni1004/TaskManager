@@ -5,6 +5,7 @@ import {
   getTasksByStudentService,
   getTasksByTeacherService,
   updateTaskService,
+  updateTaskStatusService,
 } from "../services/taskServices";
 
 //create task
@@ -109,6 +110,41 @@ export const updateTaskController = async (
     res.status(500).json({ message: "Error updating task: " });
   }
 };
+
+//updateStatus
+export const updateTaskStatusController = async (req: Request, res: Response) : Promise<any> => {
+  try {
+    const { status } = req.body;
+    const { taskId } = req.params;
+    console.log("tttt",req.body) ;
+    console.log("id",taskId) ;
+
+    if (!status) {
+       
+       res.status(400).json({ message: "Status is required." });
+       return;
+    } 
+
+    const updatedTask = await updateTaskStatusService(taskId, status);
+    console.log("update",updatedTask) ;
+
+    if (!updatedTask) {
+       res.status(404).json({ message: "Task not found or could not be updated." });
+
+    }
+
+     res.status(200).json({
+      message: "Task status updated successfully",
+      task: updatedTask,
+    });
+  } catch (error: any) {
+     res.status(500).json({
+      message: "Server error updating task status",
+      error: error.message,
+    });
+  }
+};
+
 
 
 //delete

@@ -76,6 +76,19 @@ const SignUp: React.FC = () => {
             />
           </div>
 
+
+
+          <div className="form-input">
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as "student" | "teacher")}
+              className="inputOption"
+            >
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+            </select>
+          </div>
+
           {role === "student" && (
             <div className="form-input">
               <input
@@ -89,17 +102,6 @@ const SignUp: React.FC = () => {
             </div>
           )}
 
-          <div className="form-input">
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as "student" | "teacher")}
-              className="input"
-            >
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-            </select>
-          </div>
-
           {successMessage && <p className="success-message">{successMessage}</p>}
           {errorMessage && <p className="error-message">{errorMessage}</p>}
 
@@ -110,7 +112,7 @@ const SignUp: React.FC = () => {
 
         <div className="login-link">
           <p>
-            Already have an account? <a href="/login">Login here</a>
+            Already have an account? <a href="/">Login here</a>
           </p>
         </div>
       </div>
