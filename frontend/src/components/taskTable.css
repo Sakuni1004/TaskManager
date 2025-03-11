@@ -1,63 +1,116 @@
-/* Container styling */
+
 .container {
-    max-width: 90%;
-    margin: 20px auto;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow-x: auto;
-  }
-  
-  /* Table Styling */
+  max-width: 100%;
+  margin: 20px auto;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+
+thead tr {
+  background-color: #67aefb;
+  color: white;
+  text-align: left;
+  font-size: 16px;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+th:nth-child(1) {
+  width: 100px; 
+}
+
+th:nth-child(2) {
+  width: 350px; 
+}
+
+th:nth-child(3) {
+  width: 150px; 
+}
+
+th:nth-child(4) {
+  width: 120px;
+}
+
+th:nth-child(5) {
+  width: 150px; 
+}
+
+td {
+  word-wrap: break-word; 
+}
+
+
+
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+  background-color: #e3f2fd;
+  transition: 0.3s;
+}
+
+
+
+.edit-button {
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+  margin-right: 5px;
+  border-radius: 5px;
+  background-color: #45a049;
+ 
+}
+
+.delete-button {
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+  margin-right: 5px;
+  border-radius: 5px;
+  background-color: rgb(244, 32, 46);
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+
+.bg-blue-500 {
+  background-color: #007bff;
+  color: white;
+}
+
+.bg-red-500 {
+  background-color: #dc3545;
+  color: white;
+}
+
+
+@media (max-width: 768px) {
   table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-  }
-  
-  /* Table Header */
-  thead tr {
-    background-color: #67aefb;
-    color: white;
-    text-align: left;
-    font-size: 16px;
-  }
-  
-  th, td {
-    padding: 12px;
-    border: 1px solid #ddd;
-  }
-  
-  /* Table Rows */
-  tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  /* Hover effect */
-  tbody tr:hover {
-    background-color: #e3f2fd;
-    transition: 0.3s;
-  }
-  
-  /* Button Styling */
-  button {
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
     font-size: 14px;
-    transition: 0.3s;
   }
-  
-  button:hover {
-    opacity: 0.8;
+
+  th, td {
+    padding: 8px;
   }
-  
-  .bg-blue-500 {
-    background-color: #007bff;
-  }
-  
-  .bg-red-500 {
-    background-color: #dc3545;
-  }
-  
+}

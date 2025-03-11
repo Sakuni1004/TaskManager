@@ -4,6 +4,8 @@ import cors from "cors";
 import connectDB from "./config/database";
 import authRoutes from "./routes/authRoutes";
 import taskRouter from './routes/taskRoutes';
+import studentTaskRoutes from "./routes/studentTaskRoutes";
+
 
 
 
@@ -18,6 +20,7 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use('/tasks', taskRouter);
+app.use('/allStudents',studentTaskRoutes)
 
 
 

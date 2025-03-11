@@ -9,8 +9,8 @@ interface ITask extends Document {
   dueDate: Date;
   status: string;
   teacherId: mongoose.Schema.Types.ObjectId;
-  studentId: String;
-  student: mongoose.Schema.Types.ObjectId;
+  studentRegistrationNumber: String;
+  studentId: mongoose.Schema.Types.ObjectId;
   
   
   
@@ -38,16 +38,18 @@ const taskSchema: Schema = new Schema({
   },
   teacherId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    ref: "Teacher",
+    required: true
+    
   },
-  studentId: {
+  studentRegistrationNumber: {
     type: String,
   },
  
-  student: {
+  studentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Student", 
-    required: true,
+    
   },
 
 
@@ -56,3 +58,5 @@ const taskSchema: Schema = new Schema({
 const Task = mongoose.model<ITask>("Task", taskSchema);
 
 export default Task;
+
+

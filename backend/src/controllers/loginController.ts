@@ -1,82 +1,47 @@
 import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
+import { loginService } from "../services/authServices";
 import jwt from "jsonwebtoken";
-import studentModel from "../models/studentModel"; 
-import teacherModel from "../models/teacherModel"; 
 
-const loginUser = async (req: Request, res: Response): Promise<void> => {
+export const loginController = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { email, password } = req.body;
+
   try {
-    console.log("JWT_SECRET login", process.env.JWT_SECRET);
-
-    const { email, password } = req.body;
-
-    let user;
-    let role;
-    let studentId = null;
-    let userId;
-    let name;
-    
-
-    
-    user = await studentModel.findOne({ email });
-    role = "student";
-
-    console.log("u",user);
+    const user = await loginService(email, password);
 
     if (!user) {
-      
-      user = await teacherModel.findOne({ email });
-      role = "teacher";
-    } else {
-      studentId = user.studentId; 
-      userId = user._id;
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    if (!user) {
-      res.status(400).json({ message: "User not found" });
-      return;
-    }
+    console.log("User object:", user);
 
-  
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      res.status(400).json({ message: "Invalid credentials" });
-      return;
-    }
-
-  
-    const payload = {
-      id: user._id,
-      role: role,
-      studentId: studentId, 
-      name:user.username
-      
+    const payload: any = {
+      name: user.username,
+      _id: user._id,
+      role: user.role,
     };
 
-   
-    const token = jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: "1h" });
+    if (user.role === "student") {
+      payload.studentRegistrationNumber = user.studentRegistrationNumber;
+    }
 
-    console.log("Role:", role);
-    console.log("Token:", token);
-    console.log("Student ID:", studentId); 
-    console.log("student",user._id);
-    console.log("name",name);
-   
+    const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
+      expiresIn: "1h",
+    });
 
-    
+    console.log("Generated Token:", token);
     res.status(200).json({
       message: "Login successful",
       token,
-      role,
-      studentId, 
-      name
+      role: user.role,
+
+      ...(user.role === "student" && { studentId: user._id }),
+      ...(user.role === "teacher" && { teacherId: user._id }),
     });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: (error as Error).message });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ message: error.message || "Something went wrong!" });
   }
 };
-
-export default loginUser;
-
-
-

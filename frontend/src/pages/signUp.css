@@ -83,7 +83,7 @@
     box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.3);
   }
   
-  /* Login link */
+ 
   .login-link {
     text-align: center;
     margin-top: 1.5rem;
@@ -97,4 +97,4 @@
   .login-link a:hover {
     text-decoration: underline;
   }
-  
+   

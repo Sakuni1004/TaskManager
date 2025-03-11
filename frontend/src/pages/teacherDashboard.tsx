@@ -1,104 +1,84 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@mui/material";
-import CreateTaskForm from "../components/createTaskForm";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { getTasksByTeacher } from "../services/taskService";
 import { TaskTable } from "../components/taskTable";
+import CreateTaskForm from "../components/createTaskForm";
+import {deleteTask} from '../services/taskService';
 import "./teacherDashbord.css";
 
 const TeacherDashboard: React.FC = () => {
-  const [openForm, setOpenForm] = useState(false);
-  const [tasks, setTasks] = useState([]);
-  const [name, setName] = useState<string | null>(null);
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [currentTask, setCurrentTask] = useState<any | null>(null); 
+
+  const teacherName = localStorage.getItem("Name");
 
   useEffect(() => {
-    const storeName = localStorage.getItem("sName");
-    setName(storeName);
-  });
+    const fetchTasks = async () => {
+      try {
+        const teacherId = localStorage.getItem("id");
 
-  const fetchTasks = async () => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      console.error("No token found. Please log in.");
-      return;
-    }
+        if (!teacherId) {
+          console.error("No teacher ID found.");
+          return;
+        }
 
-    try {
-      const response = await axios.get("http://localhost:5000/tasks/teacher/:teacherId", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setTasks(response.data); 
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    }
-  };
+        console.log("Fetching tasks for teacher ID:", teacherId);
 
-  useEffect(() => {
+        const data = await getTasksByTeacher(teacherId);
+        console.log("data", data);
+        setTasks(data);
+      } catch (error) {
+        console.error("Failed to load tasks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchTasks();
   }, []);
 
-  const handleSubmit = async (task: {
-    title: string;
-    description: string;
-    dueDate: string;
-    studentId: string;
-    status: string;
-  }) => {
-    const token = localStorage.getItem("authToken");
 
-    if (!token) {
-      console.error("No token found. Please log in.");
-      return;
-    }
+  const handleEdit = (task: any) => {
+    console.log("Edit Task:", task);
+    setCurrentTask(task); 
+    setShowForm(true); 
+  };
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/tasks/create",
-        task,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      console.log("Task Created:", response.data);
-      setOpenForm(false);
-      fetchTasks(); 
-    } catch (error) {
-      console.error("Error creating task:", error);
-    }
+  const handleDelete = (taskId: String) => {
+    console.log("nnnn",taskId);
+    const deleteData = deleteTask(taskId);
+    const updatedTasks = tasks.filter((task) => task._id !== taskId);
+    setTasks(updatedTasks);
   };
 
   return (
     <div className="container">
-      <h1 className="heading">Welcome {name}!</h1>
-      
-      <Button
-        variant="contained"
-        color="primary"
-        className="add-task-button"
-        onClick={() => setOpenForm(true)}
-        style={{
-          position: "fixed",
-          bottom: "50px",
-          right: "20px",
-          zIndex: 1000,
-          padding: "12px 20px",
-          fontSize: "16px",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-        }}
-      >
-        Add Task
-      </Button>
+      <h1 className=" welcomeTeacher">Welcome {teacherName} ! </h1>
+      <div>
+        {loading ? (
+          <p>Loading tasks...</p>
+        ) : (
+          <TaskTable tasks={tasks} onEdit={handleEdit} onDelete={handleDelete} />
+        )}
+      </div>
 
-      {/* Pass tasks to TaskTable */}
-      <TaskTable tasks={tasks} />
+      <button onClick={() => setShowForm(true)} className="add-task-button">
+        Create Task
+      </button>
 
-      {openForm && (
+      {showForm && (
         <div className="modal-overlay">
-          <CreateTaskForm
-            onClose={() => setOpenForm(false)}
-            onSubmit={handleSubmit}
-          />
+          <div className="modal-content">
+            <CreateTaskForm
+              task={currentTask} 
+              onClose={() => setShowForm(false)}
+              onTaskCreated={() => {
+                setShowForm(false);
+                window.location.reload();
+              }}
+            />
+          </div>
         </div>
       )}
     </div>
@@ -106,3 +86,4 @@ const TeacherDashboard: React.FC = () => {
 };
 
 export default TeacherDashboard;
+

@@ -1,5 +1,5 @@
 import React from "react";
-import "./taskCard.css"; // Import CSS
+import "./taskCard.css";
 
 interface Task {
   _id: string;
@@ -10,10 +10,6 @@ interface Task {
 interface TaskCardProps {
   tasks: Task[];
 }
-
-const deleteTask = (taskId: string) => {
-  console.log("Deleting task:", taskId);
-};
 
 const editTask = (taskId: string) => {
   console.log("Editing task:", taskId);
@@ -32,9 +28,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({ tasks }) => {
           <div className="task-buttons">
             <button className="edit-btn" onClick={() => editTask(task._id)}>
               Edit
-            </button>
-            <button className="delete-btn" onClick={() => deleteTask(task._id)}>
-              Delete
             </button>
           </div>
         </div>

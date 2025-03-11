@@ -1,16 +1,19 @@
+
+
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface Student extends Document {
+export interface IStudent extends Document {
   username: string;
   email: string;
   password: string;
   role: "student" | ""; 
   tasks: mongoose.Types.ObjectId[]; 
-  studentId: String;
+  studentRegistrationNumber:String;
+
   
 }
 
-const StudentSchema = new Schema<Student>({
+const StudentSchema = new Schema<IStudent>({
   username: {
     type: String,
     required: true,
@@ -36,12 +39,14 @@ const StudentSchema = new Schema<Student>({
       ref: "Task",
     },
   ],
-  studentId:{
-    type:String,
+  studentRegistrationNumber: {
+    type: String,
     required: true,
+    unique: true,
   },
+
 
 
 });
 
-export default mongoose.model<Student>("Student", StudentSchema);
+export default mongoose.model<IStudent>("Student", StudentSchema);

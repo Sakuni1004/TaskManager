@@ -1,49 +1,47 @@
-
-
 import React, { useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import "./signUp.css";
+import { useNavigate } from "react-router-dom"; // To redirect after signup
+import { signUpUser } from "../services/signupServices"; // Your service file to handle the API call
+import './signUp.css';
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"student" | "teacher" | "">("");
-  const [studentId, setStudentId] = useState(""); // Add state for student ID
+  const [studentRegistrationNumber, setStudentRegistrationNumber] = useState("");
+  const [role, setRole] = useState<"student" | "teacher">("student");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
     setSuccessMessage("");
+
     try {
-      const response = await axios.post("http://localhost:5000/auth/register", {
+      
+      const response = await signUpUser(
         username,
         email,
         password,
         role,
-        studentId: role === "student" ? studentId : undefined, // Send studentId only if role is "student"
-      });
-
-      setSuccessMessage(response.data.message);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch (error: any) {
-      console.error(
-        "Error registering user:",
-        error.response?.data || error.message
+        role === "student" ? studentRegistrationNumber : undefined // Only send the studentRegistrationNumber for students
       );
-      setErrorMessage(error.response?.data?.message || "Something went wrong!");
+
+     
+      setSuccessMessage("Signup successful!");
+      navigate("/"); 
+    } catch (error: any) {
+     
+      setErrorMessage(error.message || "Something went wrong!");
     }
   };
 
   return (
     <div className="signup-container">
       <div className="signup-form">
-        <h1 className="signup-heading">Sign Up to Task Manager</h1>
+        <h1 className="signup-heading">Sign Up</h1>
         <form onSubmit={handleSignUp} className="form">
           <div className="form-input">
             <input
@@ -55,6 +53,7 @@ const SignUp: React.FC = () => {
               required
             />
           </div>
+
           <div className="form-input">
             <input
               type="email"
@@ -65,6 +64,7 @@ const SignUp: React.FC = () => {
               required
             />
           </div>
+
           <div className="form-input">
             <input
               type="password"
@@ -75,46 +75,42 @@ const SignUp: React.FC = () => {
               required
             />
           </div>
-          <div className="form-input">
-            <select
-              className="inputRole"
-              value={role}
-              onChange={(e) => setRole(e.target.value as "student" | "teacher" | "")}
-              required
-            >
-              <option value="">Select Your Role</option>  {/* Default option */}
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-            </select>
-          </div>
 
-          {/* Conditionally render student ID field if role is "student" */}
           {role === "student" && (
             <div className="form-input">
               <input
                 type="text"
                 className="input"
-                placeholder="Student ID"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
+                placeholder="Student Registration Number"
+                value={studentRegistrationNumber}
+                onChange={(e) => setStudentRegistrationNumber(e.target.value)}
                 required
               />
             </div>
           )}
 
-          {successMessage && (
-            <p className="success-message">{successMessage}</p>
-          )}
+          <div className="form-input">
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as "student" | "teacher")}
+              className="input"
+            >
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+            </select>
+          </div>
 
+          {successMessage && <p className="success-message">{successMessage}</p>}
           {errorMessage && <p className="error-message">{errorMessage}</p>}
 
           <button type="submit" className="submit-button">
             Sign Up
           </button>
         </form>
+
         <div className="login-link">
           <p>
-            Already have an account? <Link to="/">Login here</Link>
+            Already have an account? <a href="/login">Login here</a>
           </p>
         </div>
       </div>

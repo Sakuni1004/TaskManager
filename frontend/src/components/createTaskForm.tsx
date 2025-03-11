@@ -1,112 +1,214 @@
-import React, { useState } from "react";
-import {
-  TextField,
-  Button,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  SelectChangeEvent, // Import this
-} from "@mui/material";
-import "./CreateTaskForm.css"; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import { createTask, updateTask } from "../services/taskService";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { getAllStudents } from "../services/studentServices";
+import "./CreateTaskForm.css";
+
+// Define Student interface
+interface Student {
+  _id: string;
+  studentRegistrationNumber: string;
+  username: string;
+}
 
 interface CreateTaskFormProps {
   onClose: () => void;
-  onSubmit: (task: {
-    title: string;
-    description: string;
-    dueDate: string;
-    studentId: string;
-    status: string;
-  }) => void;
+  onTaskCreated: () => void;
+  task?: any;
 }
 
 const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   onClose,
-  onSubmit,
+  onTaskCreated,
+  task,
 }) => {
-  const [task, setTask] = useState({
+  const studentId = localStorage.getItem("sId") || "";
+  const teacherId = localStorage.getItem("id") || "";
+
+  if (!teacherId) {
+    console.error("Teacher ID not found in localStorage");
+  }
+
+
+
+  const [students, setStudents] = useState<Student[]>([]); // Ensure proper type
+  const [selectedStudentId, setSelectedStudentId] = useState<string>(""); // Store selected student ID
+  const [selectedRegNumber, setSelectedRegNumber] = useState<string>(""); // Store registration number
+
+
+  const [taskData, setTaskData] = useState({
     title: "",
     description: "",
     dueDate: "",
-    studentId: "",
-    status: "",
+    status: "Pending",
+    teacherId,
+    studentRegistrationNumber: selectedRegNumber,
+    studentId: selectedStudentId,
   });
 
+
+
+  useEffect(() => {
+    if (task) {
+      setTaskData({
+        title: task.title || "",
+        description: task.description || "",
+        dueDate: task.dueDate || "",
+        status: task.status || "Pending",
+        teacherId: task.teacherId || teacherId,
+        studentRegistrationNumber: task.studentRegistrationNumber || "",
+        studentId: task.studentId || studentId,
+      });
+    }
+  }, [task, teacherId, studentId]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await getAllStudents();
+       const dataArray = response.data
+        if (Array.isArray(dataArray)) {
+
+          setStudents(dataArray);
+        } else {
+          console.error("Expected an array but got:", response);
+          setStudents([]); // Fallback to empty array
+        }
+      } catch (error) {
+        console.error("Error fetching students:", error);
+        setStudents([]); 
+      }
+    };
+  
+    fetchStudents();
+  }, []);
   const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | SelectChangeEvent<string>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setTask((prevTask) => ({
-      ...prevTask,
-      [name]: value,
-    }));
+    setTaskData({ ...taskData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = event.target.value;
+    const student = students.find((s) => s._id === selectedId);
+
+    if (student) {
+      setSelectedStudentId(student._id);
+      setSelectedRegNumber(student.studentRegistrationNumber);
+
+      // Update taskData with selected student details
+      setTaskData((prevTaskData) => ({
+        ...prevTaskData,
+        studentId: student._id,
+        studentRegistrationNumber: student.studentRegistrationNumber,
+      }));
+    } else {
+      setSelectedStudentId("");
+      setSelectedRegNumber("");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(task);
-    setTask({
-      title: "",
-      description: "",
-      dueDate: "",
-      studentId: "",
-      status: "",
-    });
+
+    if (
+      !taskData.title ||
+      !taskData.description ||
+      !taskData.dueDate ||
+      !taskData.studentRegistrationNumber ||
+      !taskData.teacherId ||
+      !taskData.studentId
+    ) {
+      alert("All fields are required!");
+      return;
+    }
+
+    try {
+      if (task) {
+        await updateTask(task._id, taskData);
+        alert("Task updated successfully!");
+      } else {
+        await createTask(taskData);
+        alert("Task created successfully!");
+      }
+
+      onTaskCreated();
+      onClose();
+    } catch (error) {
+      console.error("Failed to create/edit task:", error);
+    }
   };
 
   return (
     <div className="task-form-container">
-      <h2 className="form-title">Create New Task</h2>
+      <h2 className="form-title">{task ? "Edit Task" : "Create Task"}</h2>
       <form className="task-form" onSubmit={handleSubmit}>
-        <TextField
-          label="Task Title"
+      <label htmlFor="title">Enter Task Title</label>
+        <input
+          type="text"
           name="title"
-          value={task.title}
+          placeholder="Task Title"
+          value={taskData.title}
           onChange={handleChange}
-          fullWidth
-          margin="normal"
           required
         />
-
-        <TextField
-          label="Task Description"
+      <label htmlFor="title">Enter Task Sescription</label>
+        <textarea
           name="description"
-          value={task.description}
+          placeholder="Task Description"
+          value={taskData.description}
           onChange={handleChange}
-          fullWidth
-          margin="normal"
-          multiline
-          rows={4}
           required
         />
+      <label htmlFor="title">Enter deadline for the task</label>
 
-        <TextField
+        <input
           type="date"
-          label="Due Date"
           name="dueDate"
-          value={task.dueDate}
+          value={taskData.dueDate}
           onChange={handleChange}
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
           required
         />
 
-        <TextField
-          label="Student ID"
-          name="studentId"
-          value={task.studentId}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
+        {/* Student Dropdown */}
+        <div>
+          <label>Select a Student:</label>
+          <select onChange={handleSelectChange} value={selectedStudentId}>
+  <option value="">-- Select --</option>
+  {Array.isArray(students) &&
+    students.map((student) => (
+      <option key={student._id} value={student._id}>
+        {student.username}
+      </option>
+    ))}
+</select>
 
+          {selectedStudentId && (
+            <div>
+              <h3>Selected Student Details:</h3>
+              <p>
+                <strong>ID:</strong> {selectedStudentId}
+              </p>
+              <p>
+                <strong>Registration Number:</strong> {selectedRegNumber}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Status Dropdown */}
         <FormControl fullWidth margin="normal">
           <InputLabel>Status</InputLabel>
-          <Select name="status" value={task.status} onChange={handleChange}>
+          <Select
+            name="status"
+            value={taskData.status}
+            onChange={(e) =>
+              setTaskData((prev) => ({
+                ...prev,
+                status: e.target.value as string,
+              }))
+            }
+          >
             <MenuItem value="Created">Created</MenuItem>
             <MenuItem value="Pending">Pending</MenuItem>
             <MenuItem value="Completed">Completed</MenuItem>
@@ -115,18 +217,12 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
         </FormControl>
 
         <div className="button-group">
-          <Button type="submit" variant="contained" color="primary">
-            Create Task
-          </Button>
-          <Button
-            type="button"
-            variant="outlined"
-            color="secondary"
-            onClick={onClose}
-            className="cancel-button"
-          >
+          <button type="button" className="cancel-button" onClick={onClose}>
             Cancel
-          </Button>
+          </button>
+          <button type="submit" className="Cbutton">
+            {task ? "Update Task" : "Create Task"}
+          </button>
         </div>
       </form>
     </div>

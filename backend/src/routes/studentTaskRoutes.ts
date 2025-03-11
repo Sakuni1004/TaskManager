@@ -1,10 +1,11 @@
-// import express, { Request, Response } from "express";
-
-// import {getTasksByStudent} from '../controllers/studentTaskController';
-
-// const router = express.Router();
+import express, { Request, Response } from "express";
+import {getAllStudentsController} from '../controllers/studentController'
+import { authenticateUser } from "../middleware/authMiddleware"; 
 
 
-// router.get("/:studentId", getTasksByStudent);
+const router = express.Router();
 
-// export default router;
+
+router.get("/students",authenticateUser, getAllStudentsController);
+
+export default router;

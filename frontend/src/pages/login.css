@@ -1,10 +1,10 @@
-/* Basic page styling */
+
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f0f4f8; /* Light background */
+    background-color: #f0f4f8; 
   }
   
   .login-form {
@@ -24,7 +24,7 @@
     margin-bottom: 1.5rem;
   }
   
-  /* Styling for form inputs */
+ 
   .form {
     display: flex;
     flex-direction: column;
@@ -52,7 +52,7 @@
     box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.3);
   }
   
-  /* Submit button */
+
   .submit-button {
     width: 100%;
     padding: 1rem;
@@ -88,4 +88,4 @@
   .sign-up-link a:hover {
     text-decoration: underline;
   }
-  
+   

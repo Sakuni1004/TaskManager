@@ -1,72 +1,47 @@
-import React, { useEffect, useState } from "react";
+
+import React from "react";
 import './taskTable.css';
 
 interface Task {
-    _id: string;
-    title: string;
-    description: string;
-    status: string;
-    dueDate: string;
-  }
+  title: string;
+  description: string;
+  dueDate: string;
+  status: string;
+  _id: string;
+}
 
-  const deleteTask = (taskId: string) => {
-    console.log("deleting task:", taskId);
-    
-  };
+interface TaskTableProps {
+  tasks: Task[];
+  onEdit: (task: Task) => void;
+  onDelete: (taskId: String) => void; 
+}
 
-  const editTask = (taskId: string) => {
-    console.log("Editing task:", taskId);
-   
-  };
-
-  interface TaskTableProps {
-    tasks: Task[]; 
-  }
-  
-
-export   const TaskTable: React.FC <TaskTableProps>= ({ tasks }) => {
-    
-  
-    return (
-        <div className="container ">
-         
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Task ID</th>
-                <th className="border p-2">Title</th>
-                <th className="border p-2">Description</th>
-                <th className="border p-2">Status</th>
-                <th className="border p-2">Due Date</th>
-                <th className="border p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.map((task) => (
-                <tr key={task._id} className="border">
-                  <td className="border p-2">{task._id}</td>
-                  <td className="border p-2">{task.title}</td>
-                  <td className="border p-2">{task.description}</td>
-                  <td className="border p-2">{task.status}</td>
-                  <td className="border p-2">{new Date(task.dueDate).toLocaleDateString()}</td>
-                  <td className="border p-2">
-                    <button
-                      className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
-                      onClick={() => editTask(task._id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                      onClick={() => deleteTask(task._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-  }
+export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit, onDelete }) => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Actions</th> 
+        </tr>
+      </thead>
+      <tbody>
+        {tasks.map((task, index) => (
+          <tr key={index}>
+            <td>{task.title}</td>
+            <td>{task.description}</td>
+            <td>{new Date(task.dueDate).toLocaleDateString()}</td>
+            <td>{task.status}</td>
+            <td>
+              <button className="edit-button" onClick={() => onEdit(task)}>Edit</button>
+              <button className="delete-button" onClick={() => onDelete(task._id)}>Delete</button>
+            </td> 
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
