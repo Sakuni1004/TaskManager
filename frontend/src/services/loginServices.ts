@@ -17,6 +17,8 @@ export const loginUser = async (email: string, password: string) => {
 
     if (decodedToken) {
       localStorage.setItem("Name", decodedToken.name);
+      localStorage.setItem("userRole", decodedToken.role);
+      
 
       
       if (decodedToken.role === "student") {

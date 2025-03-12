@@ -1,41 +1,51 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getTasksByTeacher, deleteTask } from "../services/taskService";
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  completed: boolean;
-}
+// Async thunk to fetch tasks
+export const fetchTasks = createAsyncThunk(
+  "tasks/fetchTasks",
+  async (teacherId: string) => {
+    const response = await getTasksByTeacher(teacherId);
+    return response;
+  }
+);
 
-interface TaskState {
-  tasks: Task[];
-}
-
-const initialState: TaskState = {
-  tasks: [],
-};
+// Async thunk to delete a task
+export const removeTask = createAsyncThunk(
+  "tasks/removeTask",
+  async (taskId: string, { dispatch }) => {
+    await deleteTask(taskId);
+    dispatch(deleteTaskFromState(taskId));
+  }
+);
 
 const taskSlice = createSlice({
-  name: 'tasks',
-  initialState,
+  name: "tasks",
+  initialState: {
+    data: [],
+    loading: false,
+    error: null,
+  },
   reducers: {
-    setTasks: (state, action: PayloadAction<Task[]>) => {
-      state.tasks = action.payload;
+    deleteTaskFromState: (state, action) => {
+      state.data = state.data.filter((task: any) => task._id !== action.payload);
     },
-    addTask: (state, action: PayloadAction<Task>) => {
-      state.tasks.push(action.payload);
-    },
-    updateTask: (state, action: PayloadAction<Task>) => {
-      const index = state.tasks.findIndex((task) => task.id === action.payload.id);
-      if (index !== -1) {
-        state.tasks[index] = action.payload;
-      }
-    },
-    deleteTask: (state, action: PayloadAction<string>) => {
-      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTasks.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchTasks.rejected, (state, action) => {
+        state.loading = false;
+        
+      });
   },
 });
 
-export const { setTasks, addTask, updateTask, deleteTask } = taskSlice.actions;
+export const { deleteTaskFromState } = taskSlice.actions;
 export default taskSlice.reducer;

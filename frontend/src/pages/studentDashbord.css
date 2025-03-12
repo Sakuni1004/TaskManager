@@ -9,3 +9,27 @@
 .container2{
   margin: 20px;
 }
+
+.dashboard-container{
+  margin-left: 175px; 
+  padding: 20px;
+  width: 100%;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%; /* Make the sidebar take full width on mobile */
+    position: relative; /* Change position to relative on mobile */
+  }
+
+  .dashboard-container {
+    margin-left: 0;
+    padding: 10px;
+  }
+}

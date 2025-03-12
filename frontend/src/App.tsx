@@ -6,6 +6,7 @@ import SignUp from './pages/signUp'
 import "./index.css";
 import TeacherDashboard from './pages/teacherDashboard';
 import StudentDashboard from './pages/studentDashboard';
+import ProtectedRoute from "./components/protectedRoute";
 
 const App: React.FC = () => {
   return (
@@ -13,8 +14,14 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route element={<ProtectedRoute />}>
         <Route path="/teacherDashboard" element={<TeacherDashboard />} />
+
+        </Route>
+        <Route element={<ProtectedRoute />}>
         <Route path="/studentDashboard" element={<StudentDashboard />} />
+
+        </Route>
       </Routes>
     </BrowserRouter>
   );

@@ -3,15 +3,28 @@ import { getTasksByTeacher } from "../services/taskService";
 import { TaskTable } from "../components/taskTable";
 import CreateTaskForm from "../components/createTaskForm";
 import {deleteTask} from '../services/taskService';
+import Sidebar from "../components/sideBar";
+import { useNavigate } from "react-router-dom"; 
 import "./teacherDashbord.css";
+
 
 const TeacherDashboard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [currentTask, setCurrentTask] = useState<any | null>(null); 
+  const [userRole, setUserRole] = useState(String);
+  const navigate = useNavigate();
+
 
   const teacherName = localStorage.getItem("Name");
+  useEffect(() => {
+    const role = localStorage.getItem("userRole");
+    if (role === "teacher") {
+      setUserRole(role);  
+    } 
+  }, []);
+
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -52,8 +65,19 @@ const TeacherDashboard: React.FC = () => {
     setTasks(updatedTasks);
   };
 
+  const logout = () => {
+    localStorage.clear();
+    navigate("/"); 
+  };
+
+
   return (
+  
     <div className="container">
+      
+      <Sidebar userRole={userRole} onLogout={logout} />
+        
+      <div className="dashboard-container">
       <h1 className=" welcomeTeacher">Welcome {teacherName} ! </h1>
       <div>
         {loading ? (
@@ -81,6 +105,7 @@ const TeacherDashboard: React.FC = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
