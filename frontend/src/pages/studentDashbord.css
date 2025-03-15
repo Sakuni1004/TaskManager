@@ -1,7 +1,4 @@
 
-
-
-
 .welcome{
   text-align: center;
 }
@@ -13,7 +10,7 @@
 .dashboard-container{
   margin-left: 175px; 
   padding: 20px;
-  width: 100%;
+  width: 85%;
   overflow-y: auto;
   height: 100vh;
 }
@@ -24,8 +21,8 @@
   }
 
   .sidebar {
-    width: 100%; /* Make the sidebar take full width on mobile */
-    position: relative; /* Change position to relative on mobile */
+    width: 100%; 
+    position: relative; 
   }
 
   .dashboard-container {

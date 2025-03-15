@@ -61,7 +61,7 @@ export const getTasksByTeacherId = async (req: Request, res: Response) => {
     const { teacherId } = req.params;
 
     const tasks = await getTasksByTeacherService(teacherId);
-    console.log("tasksTeacher", tasks);
+    // console.log("tasksTeacher", tasks);
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json("Error fetching tasks");
@@ -73,23 +73,23 @@ export const getTasksByTeacherId = async (req: Request, res: Response) => {
 
 //get task by student Id
 export const getTasksByStudentId = async (req: Request, res: Response) => {
-  console.log(" Controller reached!");
   try {
     const { studentId } = req.params;
-    console.log("Received studentId:", studentId);
+    console.log("Fetching tasks for student ID:", studentId);
 
     const tasks = await getTasksByStudentService(studentId);
-    console.log("Fetched tasks:", tasks);
-
     res.status(200).json(tasks);
+    return;
   } catch (error) {
-    console.error("Error in controller:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    const err = error as Error; 
+    console.error("Error fetching tasks:", err.message);
+     res.status(500).json({ message: err.message || "Internal Server Error" });
+     return
   }
 };
 
 
-//update tasks by taskId
+//update tasks by teacher
 export const updateTaskController = async (
   req: Request,
   res: Response
@@ -107,7 +107,7 @@ export const updateTaskController = async (
 
     res.status(200).json(updatedTask);
   } catch (error) {
-    res.status(500).json({ message: "Error updating task: " });
+    res.status(500).json({  message: (error as Error).message || "Internal Server Error" });
   }
 };
 
@@ -163,3 +163,4 @@ export const deleteTaskController = async (req: Request, res: Response): Promise
     res.status(500).json({ error: error instanceof Error ? error.message : "Failed to delete task" });
   }
 };
+

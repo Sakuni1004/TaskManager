@@ -23,6 +23,15 @@
     color: #2d3748;
     margin-bottom: 1.5rem;
   }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-weight: 500;
+  }
+  
   
  
   .form {

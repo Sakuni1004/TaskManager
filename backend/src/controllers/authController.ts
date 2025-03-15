@@ -29,17 +29,4 @@ export const signUpController = async (
   }
 };
 
-//login user
-// export const loginController = async (req: Request, res: Response) => {
-//   const { email, password } = req.body;
-//   try {
-//     const user = await loginService(email, password);
-//     return res.status(200).json({
-//       message: "Login successful",
-//       user,
-//     });
-//   } catch (error: any) {
-//     console.error(error);
-//     res.status(401).json({ message: error.message || "Invalid credentials." });
-//   }
-// };
+

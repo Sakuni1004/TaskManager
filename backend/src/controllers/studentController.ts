@@ -4,7 +4,7 @@ import {getAllStudents} from '../services/studentServices'
 
 export const getAllStudentsController = async (req: Request, res: Response) => {
     try {
-      const filters = req.query; // Extract filters from query parameters
+      const filters = req.query; 
       const students = await getAllStudents(filters);
       res.status(200).json({ success: true, data: students });
     } catch (error) {

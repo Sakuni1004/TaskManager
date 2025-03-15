@@ -6,7 +6,7 @@ export const authenticateUser = (
   res: Response,
   next: NextFunction
 ): any => {
-  console.log("Request Headers:", req.headers);
+  
 
   const authHeader = req.header("Authorization");
 

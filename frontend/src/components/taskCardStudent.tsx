@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { updateExistingTaskStatus } from "../slices/taskSlice";
+import { AppDispatch } from '../store/store';
+
 import "./taskCard.css";
-import { updateTaskStatus } from "../services/taskService";
 
 interface Task {
   _id: string;
@@ -15,6 +18,8 @@ interface TaskCardProps {
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({ tasks, onStatusUpdate }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [newStatus, setNewStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,20 +31,23 @@ export const TaskCard: React.FC<TaskCardProps> = ({ tasks, onStatusUpdate }) => 
 
   const handleStatusUpdate = async () => {
     if (!selectedTask) return;
-
+  
     setLoading(true);
     try {
-      const updatedTask = await updateTaskStatus(selectedTask._id, newStatus);
-      console.log("Updated Task Response:", updatedTask);
-
-      if (updatedTask && updatedTask.task) {
-        onStatusUpdate(updatedTask.task);
-        setSelectedTask(null);
+      const updatedTask = await dispatch(updateExistingTaskStatus({
+        taskId: selectedTask._id,  // taskId
+        status: newStatus          // newStatus
+      }));
+  
+      if (updatedTask.payload) {
+        onStatusUpdate(updatedTask.payload);  // Ensure the parent receives the updated task
+        setSelectedTask(null); // Close the modal
+        console.log("dffffdffdf",updatedTask.payload);
       } else {
         console.warn("Unexpected response format:", updatedTask);
       }
     } catch (error: any) {
-      console.error("Error updating task status:", error.message);
+      console.error("Error updating task status:", error.response ? error.response.data : error.message);
     } finally {
       setLoading(false);
     }
@@ -92,3 +100,5 @@ export const TaskCard: React.FC<TaskCardProps> = ({ tasks, onStatusUpdate }) => 
     </div>
   );
 };
+
+

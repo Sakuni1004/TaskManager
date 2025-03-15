@@ -39,14 +39,14 @@ export const createTask = async (taskData: any) => {
 // get tasks by student
 export const getTasksByStudent = async (studentId: string) => {
   const token = localStorage.getItem("authToken");
-  console.log("ffffffffffffffuuuuuuu",token);
+  
   if (!token) throw new Error("No token found. Please log in.");
 
   try {
     const response = await axios.get(`${API_URL}/tasks/student/${studentId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Fetched tasks response:", response);
+    
     return response.data;
   } catch (error) {
     console.error("Error fetching student tasks:", error);
@@ -114,10 +114,10 @@ export const getTasksByTeacher = async (teacherId: string) => {
     try {
       const authToken = token || localStorage.getItem("authToken"); 
       if (!authToken) throw new Error("No authentication token provided");
-
-
-      const response = await axios.put
-      (`${API_URL}/tasks/status/${taskId}`, { status },
+  
+      const response = await axios.put(
+        `${API_URL}/tasks/status/${taskId}`, 
+        { status },
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -125,13 +125,14 @@ export const getTasksByTeacher = async (teacherId: string) => {
           },
         }
       );
-      console.log("responceeeeeeeeeeeee",response);
+      console.log("Task status updated:", response);
       return response.data;
     } catch (error: any) {
       console.error("Error updating task status:", error.response?.data || error.message);
       throw new Error(error.response?.data?.message || "Failed to update task status");
     }
   };
+  
   
 
 

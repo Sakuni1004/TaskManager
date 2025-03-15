@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { createTask, updateTask } from "../services/taskService";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from '../store/store';
+import { createNewTask, updateExistingTask } from "../slices/taskSlice";
+import { fetchStudents } from "../slices/studentSlice";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { getAllStudents } from "../services/studentServices";
+import { RootState } from "../store/store";
 import "./CreateTaskForm.css";
-
-
-interface Student {
-  _id: string;
-  studentRegistrationNumber: string;
-  username: string;
-  
-}
 
 interface CreateTaskFormProps {
   onClose: () => void;
@@ -23,16 +18,13 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   onTaskCreated,
   task,
 }) => {
-  const studentId = localStorage.getItem("sId") || "";
+  const dispatch = useDispatch<AppDispatch>();
+  const students = useSelector((state: RootState) => state.students.students);
+  const [selectedStudentId, setSelectedStudentId] = useState<string>("");
+  const [selectedRegNumber, setSelectedRegNumber] = useState<string>("");
+
   const teacherId = localStorage.getItem("id") || "";
-
-  if (!teacherId) {
-    console.error("Teacher ID not found in localStorage");
-  }
-
-  const [students, setStudents] = useState<Student[]>([]); 
-  const [selectedStudentId, setSelectedStudentId] = useState<string>(""); 
-  const [selectedRegNumber, setSelectedRegNumber] = useState<string>(""); 
+  const studentId = localStorage.getItem("sId") || "";
 
   const [taskData, setTaskData] = useState({
     title: "",
@@ -45,6 +37,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   });
 
   useEffect(() => {
+    dispatch(fetchStudents());
     if (task) {
       setTaskData({
         title: task.title || "",
@@ -56,56 +49,37 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
         studentId: task.studentId || studentId,
       });
     }
-  }, [task, teacherId, studentId]);
+  }, [task, teacherId, studentId, dispatch]);
 
   useEffect(() => {
-    const fetchStudents = async () => {
-      try {
-        const response = await getAllStudents();
-        const dataArray = response.data;
-        if (Array.isArray(dataArray)) {
-          setStudents(dataArray);
-        } else {
-          console.error("Expected an array but got:", response);
-          setStudents([]); 
-        }
-      } catch (error) {
-        console.error("Error fetching students:", error);
-        setStudents([]);
+    if (selectedStudentId) {
+      const selectedStudent = students.find(
+        (student) => student._id === selectedStudentId
+      );
+      if (selectedStudent) {
+        setSelectedRegNumber(selectedStudent.studentRegistrationNumber);
+        setTaskData((prevTaskData) => ({
+          ...prevTaskData,
+          studentRegistrationNumber: selectedStudent.studentRegistrationNumber,
+          studentId: selectedStudentId,
+        }));
       }
-    };
+    }
+  }, [selectedStudentId, students]);
 
-    fetchStudents();
-  }, []);
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTaskData({ ...taskData, [e.target.name]: e.target.value });
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedId = event.target.value;
-    const student = students.find((s) => s._id === selectedId);
-
-    if (student) {
-      setSelectedStudentId(student._id);
-      setSelectedRegNumber(student.studentRegistrationNumber);
-
-      // Update taskData with selected student details
-      setTaskData((prevTaskData) => ({
-        ...prevTaskData,
-        studentId: student._id,
-        studentRegistrationNumber: student.studentRegistrationNumber,
-      }));
-    } else {
-      setSelectedStudentId("");
-      setSelectedRegNumber("");
-    }
+    setSelectedStudentId(event.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log("Task Data Submitted:", taskData); 
+  
     if (
       !taskData.title ||
       !taskData.description ||
@@ -114,25 +88,39 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
       !taskData.teacherId ||
       !taskData.studentId
     ) {
-      alert("All fields are required!");
+      alert("All fields are required!!");
       return;
     }
-
+  
     try {
+      
       if (task) {
-        await updateTask(task._id, taskData);
+        const updatedTaskData = { ...taskData, _id: task._id }; 
+        await dispatch(updateExistingTask(updatedTaskData));
         alert("Task updated successfully!");
       } else {
-        await createTask(taskData);
+        const taskWithPlaceholderId = { ...taskData, _id: "" }; 
+       await dispatch(createNewTask(taskWithPlaceholderId));
         alert("Task created successfully!");
       }
-
+  
       onTaskCreated();
       onClose();
     } catch (error) {
       console.error("Failed to create/edit task:", error);
     }
   };
+  
+
+  const handleCancel = () => {
+    onClose();
+  };
+
+
+  if (!Array.isArray(students)) {
+    console.error("Expected students to be an array, but got:", students);
+    return <div>Error: Unable to load students data!</div>;
+  }
 
   return (
     <div className="task-form-container">
@@ -244,7 +232,7 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
         </FormControl>
 
         <div className="button-group">
-          <button type="button" className="cancel-button" onClick={onClose}>
+          <button type="button" className="cancel-button" onClick={handleCancel}>
             Cancel
           </button>
           <button type="submit" className="Cbutton">
@@ -254,6 +242,13 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
       </form>
     </div>
   );
+
+  
 };
 
 export default CreateTaskForm;
+
+
+
+
+

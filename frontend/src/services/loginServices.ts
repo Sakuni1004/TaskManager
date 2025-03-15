@@ -33,8 +33,13 @@ export const loginUser = async (email: string, password: string) => {
     return {
       message: response.data.message,
       role: response.data.role,
+      
+      token, 
+
     };
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Invalid credentials.");
   }
 };
+
+

@@ -1,32 +1,25 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/loginServices"; 
-import './login.css';
+import React, {  useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUserAsync } from "../slices/authSlice";
+
+import { AppDispatch ,RootState} from "../store/store";
+
+import "./login.css";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+
+  const { error, loading, successMessage, role } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); 
-
-    try {
-      const { message, role } = await loginUser(email, password); 
-
-      if (role === "student") {
-        navigate("/studentDashboard");
-      } else if (role === "teacher") {
-        navigate("/teacherDashboard");
-      } else {
-        setError("Invalid role received from server.");
-      }
-    } catch (error) {
-      setError("Invalid email or password. Please try again.");
-      console.error("Login error:", error);
-    }
+  
+    dispatch(loginUserAsync({ email, password }));
   };
 
   return (
@@ -34,6 +27,7 @@ const Login: React.FC = () => {
       <div className="login-form">
         <h2 className="login-heading">Login</h2>
         {error && <p className="error">{error}</p>}
+        {successMessage && <p className="success">{successMessage}</p>}
         <form className="form" onSubmit={handleLogin}>
           <div className="form-input">
             <input
@@ -55,12 +49,16 @@ const Login: React.FC = () => {
               required
             />
           </div>
-          <button type="submit" className="submit-button">Login</button>
+          <button type="submit" className="submit-button" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
         </form>
 
         {/* Sign Up Link */}
         <div className="sign-up-link">
-          <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+          <p>
+            Don't have an account? <a href="/signup">Sign Up</a>
+          </p>
         </div>
       </div>
     </div>
@@ -68,4 +66,5 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+
 

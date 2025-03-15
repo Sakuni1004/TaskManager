@@ -13,7 +13,7 @@ interface Task {
 interface TaskTableProps {
   tasks: Task[];
   onEdit: (task: Task) => void;
-  onDelete: (taskId: String) => void; 
+  onDelete: (taskId: string) => void;
 }
 
 export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onEdit, onDelete }) => {
